@@ -61,7 +61,7 @@ const getSuperHero = (id) => {
 			renderCardElement(data);
 			showHeroContainer();
 			searchInput.value = "";
-			searchInput.focus();
+			// searchInput.focus();
 		});
 };
 
