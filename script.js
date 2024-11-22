@@ -54,16 +54,34 @@ const renderCardElement = (heroCard) => {
 };
 
 const getSuperHero = (id) => {
-	fetch(`${BASE_URL}/${id}`)
-		.then((response) => response.json())
-		.then((data) => {
-			console.log(data);
-			renderCardElement(data);
-			showHeroContainer();
-			searchInput.value = "";
-			// searchInput.focus();
-		});
+	return new Promise((resolve, reject) => {
+		fetch(`${BASE_URL}/${id}`)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error("Failed to fetch superhero");
+				}
+				return response.json();
+			})
+			.then((data) => {
+				renderCardElement(data);
+				showHeroContainer();
+				searchInput.value = "";
+				resolve(data);
+			})
+			.catch((error) => reject(error));
+	});
 };
+
+// const getSuperHero = (id) => {
+// 	fetch(`${BASE_URL}/${id}`)
+// 		.then((response) => response.json())
+// 		.then((data) => {
+// 			console.log(data);
+// 			renderCardElement(data);
+// 			showHeroContainer();
+// 			searchInput.value = "";
+// 		});
+// };
 
 const getSuperHeroByName = (heroName) => {
 	fetch(`${BASE_URL}/search/${heroName}`)
@@ -100,6 +118,9 @@ const showHeroContainer = () => {
 	heroContainer.style.display = "block";
 };
 
-newHeroBtn.onclick = () => getSuperHero(randomizeId());
+newHeroBtn.onclick = () =>
+	getSuperHero(randomizeId())
+		.then((hero) => console.log("Hero fetched successfully:", hero))
+		.catch((error) => console.error("Error fetching hero:", error));
 
 searchBtn.onclick = () => getSuperHeroByName(searchHeroName());
